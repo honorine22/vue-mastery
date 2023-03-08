@@ -1,6 +1,8 @@
 <template>
   <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
+  <p>{{ fullName }}</p>
+  <hr />
+  <HelloWorld msg="Welcome to Your Vue.js App" />
 </template>
 
 <script>
@@ -8,6 +10,21 @@ import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
+  data() {
+    return {
+      lastName: "Igiraneza",
+      firstName: "Honorine"
+    }
+  },
+  methods: {
+
+  },
+  // Return methods as necessary only when the properties in computed are updated
+  computed: {
+    fullName() {
+      return `${this.firstName} ${this.lastName.toUpperCase()}`
+    }
+  },
   components: {
     HelloWorld
   }
