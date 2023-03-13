@@ -1,123 +1,165 @@
 <template>
-  <!-- ================================================== -->
-  <input type="text" v-model="firstName" @input.prevent="updateFirstName">
-  <label>
-    <input type="checkbox" v-model="isPurple" /> Purple
-  </label>
-  <input type="number" v-model="size">
-  <select v-model="selectedColor">
-    <option value="">White</option>
-    <option value="text-black">Black</option>
-    <option value="text-orange">Orange</option>
-  </select>
-  <div class="circle" :style="[{
-    width: size + 'px', height: size + 'px', lineHeight: size + 'px'
-  }, { transform: 'rotate(-50deg)' }]
-  " :class="[selectedColor, circle_classes]">
-    Hi!
-  </div>
-  <!-- ================================================== -->
-  <select v-model="mode">
-    <option value="">V-if</option>
-    <option value="2">v-else-if</option>
-    <option value="3">v-else</option>
-  </select>
-  <p v-if="mode == 1">V-if show content</p>
-  <!-- It is better to keep elements structure (use template) -->
-  <template v-else>
-    <h3>Bonus Content</h3>
-    <p>HEY I AM JUST HERE TOO</p>
-  </template>
-  <!-- Alternative for v-if: v-show -->
-  <ul>
-    <li v-for="(bird, index) in birds" :key="index" :class="bird">
-      {{ bird }} - {{ index }}
-    </li>
-  </ul>
-  <hr />
-  <ul>
-    <li v-for="(key, value, pid) in people" :key="pid">
-      <div>{{ key }} : {{ value }} - Index {{ pid }}</div>
-    </li>
-  </ul>
+  <HelloWorld msg="Hello World" />
+  <h2>CSS3 Perspective Playground</h2>
+  <main>
+    <section class="settings">
+      <div class="settings-container">
+        <label>perspective: {{ perspective }}px;</label>
+        <input type="range" min="0" max="999" v-model="perspective" />
+
+        <label>rotateX: {{ rotateX }}deg; </label>
+        <input type="range" min="-180" max="180" v-model="rotateX" />
+
+        <label>rotateY: {{ rotateY }}deg; </label>
+        <input type="range" min="-180" max="180" v-model="rotateY" />
+
+        <label>rotateZ: {{ rotateZ }}deg; </label>
+        <input type="range" min="-180" max="180" v-model="rotateZ" />
+
+        <button type="button" @click.prevent="reset">Reset</button>
+        <button type="button" @click.prevent="copy">Copy</button>
+      </div>
+    </section>
+    <section class="output">
+      <div class="box-container">
+        <div class="box" :style="box"></div>
+      </div>
+    </section>
+  </main>
 </template>
 
 <script>
+import HelloWorld from './components/HelloWorld.vue'
 export default {
   name: 'App',
+  components: {
+    HelloWorld
+  },
   data() {
     return {
-      birds: ['Pigeons', 'Eagles', 'Doves', 'Parrots'],
-      people: [
-        { name: 'John', age: 20 },
-        { name: 'Rick', age: 18 },
-        { name: 'Amy', age: 33 }
-      ],
-      mode: 2,
-      firstName: "Honorine",
-      isPurple: false,
-      selectedColor: '',
-      size: 150
+      perspective: 100,
+      rotateX: 0,
+      rotateY: 0,
+      rotateZ: 0
     }
   },
   methods: {
-    updateFirstName(event) {
-      this.firstName = event.target.value
+    reset() {
+      this.perspective = 100
+      this.rotateX = 0
+      this.rotateY = 0
+      this.rotateZ = 0
+    },
+    copy() {
+      const el = document.createElement('textarea')
+      el.setAttribute('readonly', '')
+      el.style.position = 'absolute'
+      el.style.left = '-9999px'
+      el.value = `transform: ${this.box.transform}`
+      document.body.appendChild(el)
+      el.select()
+      document.execCommand('copy')
+      document.body.removeChild(el)
     }
   },
-  // Return methods as necessary only when the properties in computed are updated
+
   computed: {
-    circle_classes() {
-      return { purple: this.isPurple };
+    box() {
+      return {
+        transform: `
+        perspective(${this.perspective}px)
+        rotateX(${this.rotateX}deg)
+        rotateY(${this.rotateY}deg)
+        rotateZ(${this.rotateZ}deg)
+        `
+      }
     }
   }
 }
 </script>
 
 <style>
+html {
+  box-sizing: border-box;
+  width: 100%;
+  height: 100%;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  padding: 0;
+  margin: 0;
+}
+
 body {
-  font-size: 20px;
   font-family: sans-serif;
+  height: 100%;
+  margin: 0;
+  /* background: #261c33; */
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center
+}
+
+h2 {
+  color: #8d81f3;
+  text-align: center;
+  font-size: 40px;
+  margin: 20px;
+}
+
+main {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 420px;
+  max-width: 768px;
+  margin: 0 auto;
+  font-family: monospace, sans-serif;
+  font-size: 22px;
+}
+
+main label {
+  display: block;
+}
+
+main input[type="range"] {
+  display: block;
+  margin-bottom: 10px;
+  width: 200px;
+}
+
+section.settings {
+  width: 50%;
+  z-index: 2;
+}
+
+.box-container {
+  padding: 50px;
+  border: 1px solid #8d81f3;
+}
+
+.box {
+  width: 150px;
+  height: 150px;
+  background: #8d81f3;
+}
+
+button {
+  background-color: #8d81f3;
+  color: #fff;
+  display: inline-block;
+  font-size: 20px;
+  padding: 10px;
+  outline: none;
+  border: none;
+  margin-right: 10px;
 }
 
 label {
-  margin-bottom: 20px;
-  font-size: 20px;
-  display: block;
-}
-
-select {
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-input[type=number] {
-  display: block;
-  font-size: 20px;
-  margin-bottom: 20px;
-}
-
-.circle {
-  width: 150px;
-  height: 150px;
-  border-radius: 100%;
-  background-color: #45D619;
-  text-align: center;
   color: #fff;
-  line-height: 150px;
-  font-size: 32px;
-  font-weight: bold;
-}
-
-.purple {
-  background-color: #767DEA;
-}
-
-.text-black {
-  color: #424242;
-}
-
-.text-orange {
-  color: #FFC26F;
 }
 </style>
